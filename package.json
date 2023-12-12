@@ -1,0 +1,14 @@
+{
+  "name": "@yinta/search-form-setting",
+  "version": "1.0.3",
+  "description": "搜索项配置组件",
+  "main": "index.vue",
+  "scripts": {
+    "pub": "npm publish --access public",
+    "pub:patch": "npm version patch",
+    "pub:minor": "npm version minor",
+    "pub:major": "npm version major"
+  },
+  "author": "",
+  "license": "ISC"
+}
