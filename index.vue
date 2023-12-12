@@ -6,7 +6,7 @@
 
     <el-dialog
       v-model="isShowConfig"
-      :title="'自定义搜索项'"
+      :title="getLangValue('自定义搜索项')"
       :width="730"
       :close-on-click-modal="false"
       @close="cancelDialog"
@@ -14,10 +14,10 @@
       draggable
       destroy-on-close
     >
-      <div class="tip-text-desc">Tip: 上下拖拽以排序</div>
+      <div class="tip-text-desc">Tip: {{ getLangValue('上下拖拽以排序') }}</div>
       <div class="head-text">
-        <div class="f-l">搜索项</div>
-        <div class="f-r">是否展示</div>
+        <div class="f-l">{{ getLangValue('搜索项') }}</div>
+        <div class="f-r">{{ getLangValue('是否展示') }}</div>
       </div>
       <ul class="fields-list">
         <li class="fields-list-li" v-for="(item,i) in newList" :data-prop="item.prop">
@@ -33,8 +33,8 @@
 
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="submitConfig" type="primary">{{ $t('公共模块.确认') }}</el-button>
-          <el-button @click="cancelDialog">{{ $t('公共模块.关闭') }}</el-button>
+          <el-button @click="submitConfig" type="primary">{{ getLangValue('确认') }}</el-button>
+          <el-button @click="cancelDialog">{{ getLangValue('关闭') }}</el-button>
         </div>
       </template>
 
@@ -47,12 +47,8 @@
  * 自定义搜索项组件
  * */
 let sortableObject = null
-const VUE_APP_BASE_API = {
-  'dev': '/apiPortalPath',
-  'sit': 'https://erp.erp-sit.yintaerp.com/yinta-portal-web',
-  'uat': 'https://erp.erp-uat.yintaerp.com/yinta-portal-web',
-  'prod': 'https://www.yintaerp.com/yinta-portal-web',
-}
+import zh from './lang/zh.js'
+import en from './lang/en.js'
 
 export default {
   props: {
@@ -79,10 +75,16 @@ export default {
       required: true
     },
 
-    //环境变量
-    env: {
+    //portal接口前缀
+    apiPortalPath: {
       type: String,
-      default: 'prod'
+      default: ''
+    },
+
+    //cookie工具
+    jsCookie: {
+      type: Object,
+      required: true
     },
   },
 
@@ -123,7 +125,7 @@ export default {
     //查询用户自定义配置
     userCustomItemSelectByUrl(params) {
       return this.request({
-        baseURL: VUE_APP_BASE_API[this.env],
+        baseURL: this.apiPortalPath,
         url: '/userCustomItem/selectByUrl',
         method: 'GET',
         params
@@ -133,11 +135,23 @@ export default {
     ////用户自定义条件配置
     userCustomItemSave(data) {
       return this.request({
-        baseURL: VUE_APP_BASE_API[this.env],
+        baseURL: this.apiPortalPath,
         url: '/userCustomItem/save',
         method: 'POST',
         data
       })
+    },
+
+    //获取语言包值
+    getLangValue(langKey) {
+      const lang = this.jsCookie.get('language') || 'zh'
+      let langObj = {}
+      if (lang === 'zh') {
+        langObj = zh
+      } else {
+        langObj = en
+      }
+      return langObj['searchFormSetting'][langKey]
     },
 
     //从服务同步最新的状态
